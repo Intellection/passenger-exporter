@@ -23,7 +23,7 @@ import (
 )
 
 const (
-	namespace = "passenger_nginx"
+	namespace = "passenger"
 
 	nanosecondsPerSecond = 1000000000
 )
@@ -34,7 +34,7 @@ var (
 	processIdentifiers = make(map[string]int)
 )
 
-// Exporter collects metrics from a passenger-nginx integration.
+// Exporter collects metrics from passenger.
 type Exporter struct {
 	// binary file path for querying passenger state.
 	cmd  string
@@ -306,7 +306,7 @@ func main() {
 	var (
 		cmd           = flag.String("passenger.command", "passenger-status --show=xml", "Passenger command for querying passenger status.")
 		timeout       = flag.Duration("passenger.command.timeout", 500*time.Millisecond, "Timeout for passenger.command.")
-		pidFile       = flag.String("passenger.pid-file", "", "Optional path to a file containing the passenger/nginx PID for additional metrics.")
+		pidFile       = flag.String("passenger.pid-file", "", "Optional path to a file containing the passenger PID for additional metrics.")
 		metricsPath   = flag.String("web.telemetry-path", "/metrics", "Path under which to expose metrics.")
 		listenAddress = flag.String("web.listen-address", ":9149", "Address to listen on for web interface and telemetry.")
 	)
@@ -333,7 +333,7 @@ func main() {
 
 	http.Handle(*metricsPath, prometheus.Handler())
 
-	log.Infoln("starting passenger_exporter_nginx", version.Info())
+	log.Infoln("starting passenger-exporter", version.Info())
 	log.Infoln("build context", version.BuildContext())
 	log.Infoln("listening on", *listenAddress)
 	log.Fatal(http.ListenAndServe(*listenAddress, nil))

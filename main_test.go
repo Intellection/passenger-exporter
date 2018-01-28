@@ -86,7 +86,7 @@ func TestScrape(t *testing.T) {
 
 	scrapeFixturePath := "./testdata/scrape_output.txt"
 	if golden {
-		idx := bytes.Index(body, []byte("# HELP passenger_nginx_app_count Number of apps."))
+		idx := bytes.Index(body, []byte("# HELP passenger_app_count Number of apps."))
 		ioutil.WriteFile(scrapeFixturePath, body[idx:], 0666)
 		t.Skipf("--golden passed: re-writing %s", scrapeFixturePath)
 	}
