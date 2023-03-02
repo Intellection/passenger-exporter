@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"flag"
 	"io/ioutil"
+	"math"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -19,7 +20,6 @@ var golden bool
 
 func init() {
 	flag.BoolVar(&golden, "golden", false, "Write test results to fixture files.")
-	flag.Parse()
 }
 
 func TestParsing(t *testing.T) {
@@ -52,9 +52,20 @@ func TestParsing(t *testing.T) {
 		if len(info.SuperGroups) == 0 {
 			t.Fatalf("%v: no supergroups in output", name)
 		}
+
+		topLevelQueue := parseFloat(info.TopLevelRequestQueueSize)
+		if topLevelQueue == 0 {
+			t.Fatalf("%v: no queuing requests parsed from output", name)
+		}
+
 		for _, sg := range info.SuperGroups {
 			if want, got := "/src/app/my_app", sg.Group.Options.AppRoot; want != got {
 				t.Fatalf("%s: incorrect app_root: wanted %s, got %s", name, want, got)
+			}
+
+			queue := parseFloat(sg.RequestQueueSize)
+			if queue == math.NaN() {
+				t.Fatalf("%v: failed to parse request queue size", name)
 			}
 
 			if len(sg.Group.Processes) == 0 {
@@ -70,6 +81,8 @@ func TestParsing(t *testing.T) {
 }
 
 func TestScrape(t *testing.T) {
+	flag.Parse()
+
 	prometheus.MustRegister(newTestExporter())
 	server := httptest.NewServer(prometheus.Handler())
 	defer server.Close()
@@ -144,9 +157,9 @@ func TestUpdateProcessIdentifiers(t *testing.T) {
 			"empty input",
 			map[string]int{},
 			[]Process{
-				Process{PID: "abc"},
-				Process{PID: "cdf"},
-				Process{PID: "dfe"},
+				{PID: "abc"},
+				{PID: "cdf"},
+				{PID: "dfe"},
 			},
 			3,
 		),
@@ -158,9 +171,9 @@ func TestUpdateProcessIdentifiers(t *testing.T) {
 				"dfe": 2,
 			},
 			[]Process{
-				Process{PID: "abc"},
-				Process{PID: "cdf"},
-				Process{PID: "dfe"},
+				{PID: "abc"},
+				{PID: "cdf"},
+				{PID: "dfe"},
 			},
 			6,
 		),
@@ -172,12 +185,12 @@ func TestUpdateProcessIdentifiers(t *testing.T) {
 				"dfe": 2,
 			},
 			[]Process{
-				Process{PID: "abc"},
-				Process{PID: "cdf"},
-				Process{PID: "dfe"},
-				Process{PID: "ghi"},
-				Process{PID: "jkl"},
-				Process{PID: "lmn"},
+				{PID: "abc"},
+				{PID: "cdf"},
+				{PID: "dfe"},
+				{PID: "ghi"},
+				{PID: "jkl"},
+				{PID: "lmn"},
 			},
 			9,
 		),
@@ -192,9 +205,9 @@ func TestUpdateProcessIdentifiers(t *testing.T) {
 				"lmn": 5,
 			},
 			[]Process{
-				Process{PID: "abc"},
-				Process{PID: "cdf"},
-				Process{PID: "dfe"},
+				{PID: "abc"},
+				{PID: "cdf"},
+				{PID: "dfe"},
 			},
 			6,
 		),
@@ -206,8 +219,8 @@ func TestUpdateProcessIdentifiers(t *testing.T) {
 				"dfe": 2,
 			},
 			[]Process{
-				Process{PID: "cdf"},
-				Process{PID: "dfe"},
+				{PID: "cdf"},
+				{PID: "dfe"},
 			},
 			3,
 		),
@@ -219,8 +232,8 @@ func TestUpdateProcessIdentifiers(t *testing.T) {
 				"dfe": 2,
 			},
 			[]Process{
-				Process{PID: "abc"},
-				Process{PID: "dfe"},
+				{PID: "abc"},
+				{PID: "dfe"},
 			},
 			3,
 		),
@@ -252,10 +265,10 @@ func TestInsertingNewProcesses(t *testing.T) {
 			"efg": 3,
 		},
 		[]Process{
-			Process{PID: "abc"},
-			Process{PID: "dfe"},
-			Process{PID: "newPID"},
-			Process{PID: "newPID2"},
+			{PID: "abc"},
+			{PID: "dfe"},
+			{PID: "newPID"},
+			{PID: "newPID2"},
 		},
 		6,
 	)

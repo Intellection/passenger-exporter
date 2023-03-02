@@ -165,7 +165,7 @@ passenger_requests_processed_total{id="8",name="/srv/app/my_app (production)"} 3
 passenger_requests_processed_total{id="9",name="/srv/app/my_app (production)"} 30490
 # HELP passenger_top_level_request_queue Number of requests in the top-level queue.
 # TYPE passenger_top_level_request_queue gauge
-passenger_top_level_request_queue 0
+passenger_top_level_request_queue 3
 # HELP passenger_up Current health of passenger.
 # TYPE passenger_up gauge
 passenger_up 1
