@@ -3,7 +3,7 @@ package main
 import (
 	"bytes"
 	"flag"
-	"io/ioutil"
+	"io"
 	"math"
 	"net/http"
 	"net/http/httptest"
@@ -95,7 +95,7 @@ func TestScrape(t *testing.T) {
 	}
 	defer res.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		t.Fatalf("failed to read response body: %v", err)
 	}
@@ -103,11 +103,13 @@ func TestScrape(t *testing.T) {
 	scrapeFixturePath := "./test/scrape_output.txt"
 	if golden {
 		idx := bytes.Index(body, []byte("# HELP passenger_app_count Number of apps."))
-		ioutil.WriteFile(scrapeFixturePath, body[idx:], 0666)
+		if err := os.WriteFile(scrapeFixturePath, body[idx:], 0666); err != nil {
+			t.Fatalf("failed to write file: %v", err)
+		}
 		t.Skipf("--golden passed: re-writing %s", scrapeFixturePath)
 	}
 
-	fixture, err := ioutil.ReadFile(scrapeFixturePath)
+	fixture, err := os.ReadFile(scrapeFixturePath)
 	if err != nil {
 		t.Fatalf("failed to read scrape fixture: %v", err)
 	}

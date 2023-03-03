@@ -6,9 +6,9 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math"
 	"net/http"
+	"os"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -442,7 +442,7 @@ func main() {
 		collectors.NewGoCollector(),
 		collectors.NewProcessCollector(collectors.ProcessCollectorOpts{
 			PidFn: func() (int, error) {
-				content, err := ioutil.ReadFile(*pidFile)
+				content, err := os.ReadFile(*pidFile)
 				if err != nil {
 					return 0, fmt.Errorf("error reading pidfile %q: %s", *pidFile, err)
 				}
