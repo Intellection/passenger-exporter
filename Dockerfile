@@ -1,53 +1,63 @@
-FROM ruby:2.4.3-alpine3.7
+ARG GOLANG_VERSION="1.20.1"
+ARG DEBIAN_VERSION="bullseye-20230227-slim"
 
-ARG GOLANG_VERSION="1.9.4-r0"
-ARG BUILD_DEPS="go=$GOLANG_VERSION ruby-dev linux-headers curl curl-dev pcre-dev libexecinfo-dev@edge-main"
-ARG RUNTIME_DEPS="tini build-base pcre git libexecinfo@edge-main"
+ARG BUILDER_IMAGE="golang:${GOLANG_VERSION}"
+ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
 
-RUN echo '@edge-main http://dl-cdn.alpinelinux.org/alpine/edge/main/' >> /etc/apk/repositories && \
-    apk update && \
-    apk upgrade && \
-    apk add $BUILD_DEPS && \
-    apk add $RUNTIME_DEPS && \
-    mkdir -p /opt
+FROM ${BUILDER_IMAGE} AS builder
+
+WORKDIR /opt/app
+
+# Install build tools
+RUN go install github.com/prometheus/promu@v0.14.0
+
+# Copy source files
+ADD . ./
+
+# Install dependencies
+RUN go mod vendor
+
+# # Add source files & build
+RUN promu build
+
+FROM ${RUNNER_IMAGE}
+
+RUN apt-get update -y && \
+    apt-get install -y \
+      apt-transport-https \
+      bash \
+      ca-certificates\
+      curl \
+      dirmngr \
+      gnupg  \
+      tini && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/*
+
+ARG APP_USER="app"
+ENV APP_HOME="/opt/app"
+
+# Create user
+RUN groupadd -g 9999 ${APP_USER} && \
+    useradd --system --create-home -u 9999 -g 9999 ${APP_USER}
 
 # Passenger
-ENV PASSENGER_VERSION="5.1.12" \
-    PATH="/opt/passenger/bin:$PATH"
-RUN curl -L "https://s3.amazonaws.com/phusion-passenger/releases/passenger-$PASSENGER_VERSION.tar.gz" | tar -xzf - -C /opt && \
-    mv /opt/passenger-$PASSENGER_VERSION /opt/passenger && \
+ARG PASSENGER_PKG="1:6.0.17-1~bullseye1"
+RUN apt-key adv --no-tty --keyserver hkps://keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7 && \
+    echo 'deb https://oss-binaries.phusionpassenger.com/apt/passenger bullseye main' > /etc/apt/sources.list.d/passenger.list && \
+    apt-get update -y && \
+    apt-get install -y passenger=${PASSENGER_PKG} && \
     passenger-config validate-install --auto && \
-    export EXTRA_PRE_CFLAGS='-O' EXTRA_PRE_CXXFLAGS='-O' EXTRA_LDFLAGS='-lexecinfo' && \
-    passenger-config compile-agent --optimize && \
-    passenger-config install-standalone-runtime && \
-    passenger-config build-native-support
+    apt clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Go configuration
-ENV GOROOT="/usr/lib/go" \
-    GOPATH="/go"
-ENV PATH="$GOPATH/bin:$GOROOT/bin:$PATH"
+# Copy files from builder
+WORKDIR ${APP_HOME}
+RUN chown ${APP_USER}:${APP_USER} ${APP_HOME}
+COPY --from=builder --chown=${APP_USER}:${APP_USER} ${APP_HOME}/passenger-exporter ./
 
-# Go dependencies
-RUN go get github.com/prometheus/promu
+# Run as user
+USER ${APP_USER}:${APP_USER}
 
-# Configure source path
-ARG SOURCE_PATH="/go/src/github.com/Intellection/passenger-exporter"
-RUN mkdir -p ${SOURCE_PATH}
-
-# Add source files
-ADD . ${SOURCE_PATH}/
-WORKDIR ${SOURCE_PATH}
-
-# Build exporter
-RUN promu build && \
-    mv ${SOURCE_PATH}/passenger-exporter /usr/local/bin/passenger-exporter && \
-    rm -rf ${SOURCE_PATH}/*
-
-# Cleanup
-RUN apk del $BUILD_PACKAGES && \
-    rm -rf /var/cache/apk/*
-
-USER nobody:nobody
-
-ENTRYPOINT ["tini", "--", "passenger-exporter"]
-CMD ["/bin/sh"]
+ENTRYPOINT ["tini", "--", "./passenger-exporter"]
+CMD ["/bin/bash"]
