@@ -287,6 +287,43 @@ func TestInsertingNewProcesses(t *testing.T) {
 	}
 }
 
+func TestProcessSurgeOverMaxProcesses(t *testing.T) {
+	spec := newUpdateProcessSpec(
+		"surging processes",
+		map[string]int{
+			"abc": 0,
+			"def": 1,
+			"hij": 2,
+		},
+		[]Process{
+			{PID: "abc"},
+			{PID: "def"},
+			{PID: "hij"},
+			{PID: "klm"},
+		},
+		3,
+	)
+
+	spec = newUpdateProcessSpec(
+		"after process surge",
+		spec.output,
+		[]Process{
+			{PID: "abc"},
+			{PID: "def"},
+			{PID: "klm"},
+		},
+		3,
+	)
+
+	if len(spec.output) != len(spec.processes) {
+		t.Fatalf("case %s: proceses improperly copied to output: len(output) (%d) does not match len(processes) (%d)", spec.name, len(spec.output), len(spec.processes))
+	}
+
+	if want, got := 2, spec.output["klm"]; want != got {
+		t.Fatalf("updateProcesses did not correctly map the new PID: wanted %d, got %d", want, got)
+	}
+}
+
 func newTestExporter() *Exporter {
 	return NewExporter("cat ./test/passenger_xml_output.xml", time.Second.Seconds())
 }

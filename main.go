@@ -370,10 +370,14 @@ func parseInt(val string) int {
 // pid:id pair in the map.
 func updateProcesses(old map[string]int, processes []Process, maxProcesses int) map[string]int {
 	var (
-		updated = make(map[string]int)
+		updated = make(map[string]int, maxProcesses)
 		found   = make([]string, maxProcesses)
 		missing []string
 	)
+
+	if len(processes) > maxProcesses {
+		processes = processes[:maxProcesses]
+	}
 
 	for _, p := range processes {
 		if id, ok := old[p.PID]; ok {
