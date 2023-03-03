@@ -17,6 +17,8 @@ import (
 	"golang.org/x/net/html/charset"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/prometheus/common/version"
 	"github.com/sirupsen/logrus"
 )
@@ -427,9 +429,15 @@ func main() {
 	)
 	flag.Parse()
 
-	if *pidFile != "" {
-		prometheus.MustRegister(prometheus.NewProcessCollectorPIDFn(
-			func() (int, error) {
+	// Create a new registry.
+	reg := prometheus.NewRegistry()
+
+	// Add Go module build info.
+	reg.MustRegister(
+		collectors.NewBuildInfoCollector(),
+		collectors.NewGoCollector(),
+		collectors.NewProcessCollector(collectors.ProcessCollectorOpts{
+			PidFn: func() (int, error) {
 				content, err := ioutil.ReadFile(*pidFile)
 				if err != nil {
 					return 0, fmt.Errorf("error reading pidfile %q: %s", *pidFile, err)
@@ -440,25 +448,18 @@ func main() {
 				}
 				return value, nil
 			},
-			namespace),
-		)
-	}
+			Namespace:    namespace,
+			ReportErrors: false,
+		}),
+		NewExporter(*cmd, *timeout),
+	)
 
-	prometheus.MustRegister(NewExporter(*cmd, *timeout))
-
-	http.Handle(*metricsPath, prometheus.Handler())
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`<html>
-             <head><title>Passenger Exporter</title></head>
-             <body>
-             <h1>Passenger Exporter</h1>
-             <p><a href='` + *metricsPath + `'>Metrics</a></p>
-             </body>
-             </html>`))
-	})
+	// Expose /metrics HTTP endpoint using the created custom registry.
+	http.Handle(*metricsPath, promhttp.HandlerFor(reg, promhttp.HandlerOpts{Registry: reg}))
 
 	log.Infoln("Starting passenger-exporter", version.Info())
 	log.Infoln("Build context", version.BuildContext())
 	log.Infoln("Listening on", *listenAddress)
+
 	log.Fatal(http.ListenAndServe(*listenAddress, nil))
 }

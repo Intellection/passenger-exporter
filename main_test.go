@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var golden bool
@@ -83,8 +84,9 @@ func TestParsing(t *testing.T) {
 func TestScrape(t *testing.T) {
 	flag.Parse()
 
-	prometheus.MustRegister(newTestExporter())
-	server := httptest.NewServer(prometheus.Handler())
+	reg := prometheus.NewRegistry()
+	reg.MustRegister(newTestExporter())
+	server := httptest.NewServer(promhttp.HandlerFor(reg, promhttp.HandlerOpts{Registry: reg}))
 	defer server.Close()
 
 	res, err := http.Get(server.URL)
