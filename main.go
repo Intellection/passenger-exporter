@@ -342,7 +342,7 @@ func parseOutput(r io.Reader) (*Info, error) {
 func parseFloat(val string) float64 {
 	v, err := strconv.ParseFloat(val, 64)
 	if err != nil {
-		log.Errorf("failed to parse %s: %v", val, err)
+		log.Debugf("failed to parse %s: %v", val, err)
 		v = math.NaN()
 	}
 	return v
@@ -351,7 +351,7 @@ func parseFloat(val string) float64 {
 func parseInt(val string) int {
 	v, err := strconv.Atoi(val)
 	if err != nil {
-		log.Errorf("failed to parse %s: %v", val, err)
+		log.Debugf("failed to parse %s: %v", val, err)
 		v = 0
 	}
 	return v
