@@ -24,25 +24,24 @@ FROM ${RUNNER_IMAGE}
 
 RUN apt-get update -y && \
     apt-get install -y \
-      apt-transport-https \
       bash \
-      ca-certificates\
-      curl \
-      dirmngr \
-      gnupg  \
-      tini && \
+      ca-certificates \
+      gnupg && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
-ARG APP_USER="app"
+ARG APP_USER="exporter"
 ENV APP_HOME="/opt/app"
+
+WORKDIR ${APP_HOME}
 
 # Create user
 RUN groupadd -g 9999 ${APP_USER} && \
     useradd --system --create-home -u 9999 -g 9999 ${APP_USER}
 
 # Passenger
-ARG PASSENGER_PKG="1:6.0.17-1~bullseye1"
+ARG PASSENGER_VERSION="6.0.17"
+ARG PASSENGER_PKG="1:${PASSENGER_VERSION}-1~bullseye1"
 RUN apt-key adv --no-tty --keyserver hkps://keyserver.ubuntu.com --recv-keys 561F9B9CAC40B2F7 && \
     echo 'deb https://oss-binaries.phusionpassenger.com/apt/passenger bullseye main' > /etc/apt/sources.list.d/passenger.list && \
     apt-get update -y && \
@@ -52,12 +51,9 @@ RUN apt-key adv --no-tty --keyserver hkps://keyserver.ubuntu.com --recv-keys 561
     rm -rf /var/lib/apt/lists/*
 
 # Copy files from builder
-WORKDIR ${APP_HOME}
-RUN chown ${APP_USER}:${APP_USER} ${APP_HOME}
 COPY --from=builder --chown=${APP_USER}:${APP_USER} ${APP_HOME}/passenger-exporter ./
 
 # Run as user
 USER ${APP_USER}:${APP_USER}
 
-ENTRYPOINT ["tini", "--", "./passenger-exporter"]
-CMD ["/bin/bash"]
+ENTRYPOINT ["./passenger-exporter"]
