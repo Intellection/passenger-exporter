@@ -60,7 +60,7 @@ func TestParsing(t *testing.T) {
 		}
 
 		for _, sg := range info.SuperGroups {
-			if want, got := "/src/app/my_app", sg.Group.Options.AppRoot; want != got {
+			if want, got := "/srv/app/demo", sg.Group.Options.AppRoot; want != got {
 				t.Fatalf("%s: incorrect app_root: wanted %s, got %s", name, want, got)
 			}
 
@@ -73,7 +73,7 @@ func TestParsing(t *testing.T) {
 				t.Fatalf("%v: no processes in output", name)
 			}
 			for _, proc := range sg.Group.Processes {
-				if want, got := "2254", proc.ProcessGroupID; want != got {
+				if want, got := "38709", proc.ProcessGroupID; want != got {
 					t.Fatalf("%s: incorrect process_group_id: wanted %s, got %s", name, want, got)
 				}
 			}
