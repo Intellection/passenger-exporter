@@ -17,8 +17,8 @@ import (
 	"golang.org/x/net/html/charset"
 
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/common/log"
 	"github.com/prometheus/common/version"
+	"github.com/sirupsen/logrus"
 )
 
 // Info represents the info section of passenger's status.
@@ -133,6 +133,7 @@ const (
 
 var (
 	processIdentifiers = make(map[string]int)
+	log                = logrus.New()
 )
 
 // Exporter collects metrics from passenger.
