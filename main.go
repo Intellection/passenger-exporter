@@ -99,33 +99,32 @@ type Process struct {
 
 // Options represents the options section of passenger's status.
 type Options struct {
-	AppRoot                   string `xml:"app_root"`
-	AppGroupName              string `xml:"app_group_name"`
-	AppType                   string `xml:"app_type"`
-	StartCommand              string `xml:"start_command"`
-	StartupFile               string `xml:"startup_file"`
-	ProcessTitle              string `xml:"process_title"`
-	LogLevel                  string `xml:"log_level"`
-	StartTimeout              string `xml:"start_timeout"`
-	Environment               string `xml:"environment"`
-	BaseURI                   string `xml:"base_uri"`
-	SpawnMethod               string `xml:"spawn_method"`
-	DefaultUser               string `xml:"default_user"`
-	DefaultGroup              string `xml:"default_group"`
-	IntegrationMode           string `xml:"integration_mode"`
-	RubyBinPath               string `xml:"ruby"`
-	PythonBinPath             string `xml:"python"`
-	NodeJSBinPath             string `xml:"nodejs"`
-	USTRouterAddress          string `xml:"ust_router_address"`
-	USTRouterUsername         string `xml:"ust_router_username"`
-	USTRouterPassword         string `xml:"ust_router_password"`
-	Debugger                  string `xml:"debugger"`
-	Analytics                 string `xml:"analytics"`
-	APIKey                    string `xml:"api_key"`
-	MinProcesses              string `xml:"min_processes"`
-	MaxProcesses              string `xml:"max_processes"`
-	MaxPreloaderIdleTime      string `xml:"max_preloader_idle_time"`
-	MaxOutOfBandWorkInstances string `xml:"max_out_of_band_work_instances"`
+	AppRoot                       string `xml:"app_root"`
+	AppGroupName                  string `xml:"app_group_name"`
+	AppType                       string `xml:"app_type"`
+	StartCommand                  string `xml:"start_command"`
+	StartupFile                   string `xml:"startup_file"`
+	ProcessTitle                  string `xml:"process_title"`
+	LogLevel                      string `xml:"log_level"`
+	StartTimeout                  string `xml:"start_timeout"`
+	Environment                   string `xml:"environment"`
+	BaseURI                       string `xml:"base_uri"`
+	SpawnMethod                   string `xml:"spawn_method"`
+	BindAddress                   string `xml:"bind_address"`
+	DefaultUser                   string `xml:"default_user"`
+	DefaultGroup                  string `xml:"default_group"`
+	RestartDirectory              string `xml:"restart_dir"`
+	IntegrationMode               string `xml:"integration_mode"`
+	RubyBinPath                   string `xml:"ruby"`
+	PythonBinPath                 string `xml:"python"`
+	NodeJSBinPath                 string `xml:"nodejs"`
+	Debugger                      string `xml:"debugger"`
+	APIKey                        string `xml:"api_key"`
+	MinProcesses                  string `xml:"min_processes"`
+	MaxProcesses                  string `xml:"max_processes"`
+	MaxPreloaderIdleTime          string `xml:"max_preloader_idle_time"`
+	MaxOutOfBandWorkInstances     string `xml:"max_out_of_band_work_instances"`
+	StickySessionCookieAttributes string `xml:"sticky_sessions_cookie_attributes"`
 }
 
 const (
