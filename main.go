@@ -404,7 +404,7 @@ func updateProcesses(old map[string]int, processes []Process, maxProcesses int) 
 func main() {
 	var (
 		cmd           = flag.String("passenger.command", "passenger-status --show=xml", "Passenger command for querying passenger status.")
-		timeout       = flag.Float64("passenger.command.timeout-seconds", 1, "Timeout in seconds for passenger.command.")
+		timeout       = flag.Float64("passenger.command.timeout-seconds", 5, "Timeout in seconds for passenger.command.")
 		pidFile       = flag.String("passenger.pid-file", "", "Optional path to a file containing the passenger PID for additional metrics.")
 		metricsPath   = flag.String("web.telemetry-path", "/metrics", "Path under which to expose metrics.")
 		listenAddress = flag.String("web.listen-address", ":9149", "Address to listen on for web interface and telemetry.")
