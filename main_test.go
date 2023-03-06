@@ -102,7 +102,7 @@ func TestScrape(t *testing.T) {
 
 	scrapeFixturePath := "./test/scrape_output.txt"
 	if golden {
-		idx := bytes.Index(body, []byte("# HELP passenger_app_count Number of apps."))
+		idx := bytes.Index(body, []byte("# HELP passenger_app_group_count Number of app groups."))
 		if err := os.WriteFile(scrapeFixturePath, body[idx:], 0666); err != nil {
 			t.Fatalf("failed to write file: %v", err)
 		}

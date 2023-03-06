@@ -26,7 +26,7 @@ import (
 // Info represents the info section of passenger's status.
 type Info struct {
 	PassengerVersion         string       `xml:"passenger_version"`
-	AppCount                 string       `xml:"group_count"`
+	AppGroupCount            string       `xml:"group_count"`
 	CurrentProcessCount      string       `xml:"process_count"`
 	MaxProcessCount          string       `xml:"max"`
 	CapacityUsed             string       `xml:"capacity_used"`
@@ -152,7 +152,7 @@ type Exporter struct {
 	topLevelRequestQueue *prometheus.Desc
 	maxProcessCount      *prometheus.Desc
 	currentProcessCount  *prometheus.Desc
-	appCount             *prometheus.Desc
+	appGroupCount        *prometheus.Desc
 
 	// App metrics.
 	appRequestQueue  *prometheus.Desc
@@ -202,9 +202,9 @@ func NewExporter(cmd string, timeout float64) *Exporter {
 			nil,
 			nil,
 		),
-		appCount: prometheus.NewDesc(
-			prometheus.BuildFQName(namespace, "", "app_count"),
-			"Number of apps.",
+		appGroupCount: prometheus.NewDesc(
+			prometheus.BuildFQName(namespace, "", "app_group_count"),
+			"Number of app groups.",
 			nil,
 			nil,
 		),
@@ -248,7 +248,7 @@ func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 	ch <- e.topLevelRequestQueue
 	ch <- e.maxProcessCount
 	ch <- e.currentProcessCount
-	ch <- e.appCount
+	ch <- e.appGroupCount
 	ch <- e.appRequestQueue
 	ch <- e.appProcsSpawning
 	ch <- e.requestsProcessed
@@ -271,7 +271,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	ch <- prometheus.MustNewConstMetric(e.topLevelRequestQueue, prometheus.GaugeValue, parseFloat(info.TopLevelRequestQueueSize))
 	ch <- prometheus.MustNewConstMetric(e.maxProcessCount, prometheus.GaugeValue, parseFloat(info.MaxProcessCount))
 	ch <- prometheus.MustNewConstMetric(e.currentProcessCount, prometheus.GaugeValue, parseFloat(info.CurrentProcessCount))
-	ch <- prometheus.MustNewConstMetric(e.appCount, prometheus.GaugeValue, parseFloat(info.AppCount))
+	ch <- prometheus.MustNewConstMetric(e.appGroupCount, prometheus.GaugeValue, parseFloat(info.AppGroupCount))
 
 	for _, sg := range info.SuperGroups {
 		ch <- prometheus.MustNewConstMetric(e.appRequestQueue, prometheus.GaugeValue, parseFloat(sg.Group.RequestQueueSize), sg.Name)

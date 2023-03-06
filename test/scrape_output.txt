@@ -1,6 +1,6 @@
-# HELP passenger_app_count Number of apps.
-# TYPE passenger_app_count gauge
-passenger_app_count 1
+# HELP passenger_app_group_count Number of app groups.
+# TYPE passenger_app_group_count gauge
+passenger_app_group_count 1
 # HELP passenger_app_procs_spawning Number of processes spawning.
 # TYPE passenger_app_procs_spawning gauge
 passenger_app_procs_spawning{name="/srv/app/demo (development)"} 0
