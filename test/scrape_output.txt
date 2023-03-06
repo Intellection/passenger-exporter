@@ -20,9 +20,9 @@ passenger_proc_memory{id="1",name="/srv/app/demo (development)"} 84400
 passenger_proc_memory{id="2",name="/srv/app/demo (development)"} 81584
 # HELP passenger_proc_start_time_seconds Number of seconds since process started.
 # TYPE passenger_proc_start_time_seconds gauge
-passenger_proc_start_time_seconds{id="0",name="/srv/app/demo (development)"} 1.677872e+06
-passenger_proc_start_time_seconds{id="1",name="/srv/app/demo (development)"} 1.677872e+06
-passenger_proc_start_time_seconds{id="2",name="/srv/app/demo (development)"} 1.677872e+06
+passenger_proc_start_time_seconds{id="0",name="/srv/app/demo (development)"} 1.677872579e+09
+passenger_proc_start_time_seconds{id="1",name="/srv/app/demo (development)"} 1.677872579e+09
+passenger_proc_start_time_seconds{id="2",name="/srv/app/demo (development)"} 1.677872579e+09
 # HELP passenger_requests_processed_total Number of requests served by a process.
 # TYPE passenger_requests_processed_total counter
 passenger_requests_processed_total{id="0",name="/srv/app/demo (development)"} 1
