@@ -6,9 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"math"
 	"net/http"
-	"os"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -17,7 +15,6 @@ import (
 	"golang.org/x/net/html/charset"
 
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/collectors"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/prometheus/common/version"
 	"github.com/sirupsen/logrus"
@@ -405,7 +402,6 @@ func main() {
 	var (
 		cmd           = flag.String("passenger.command", "passenger-status --show=xml", "Passenger command for querying passenger status.")
 		timeout       = flag.Float64("passenger.command.timeout-seconds", 5, "Timeout in seconds for passenger.command.")
-		pidFile       = flag.String("passenger.pid-file", "", "Optional path to a file containing the passenger PID for additional metrics.")
 		metricsPath   = flag.String("web.telemetry-path", "/metrics", "Path under which to expose metrics.")
 		listenAddress = flag.String("web.listen-address", ":9149", "Address to listen on for web interface and telemetry.")
 	)
@@ -415,26 +411,7 @@ func main() {
 	reg := prometheus.NewRegistry()
 
 	// Add Go module build info.
-	reg.MustRegister(
-		collectors.NewBuildInfoCollector(),
-		collectors.NewGoCollector(),
-		collectors.NewProcessCollector(collectors.ProcessCollectorOpts{
-			PidFn: func() (int, error) {
-				content, err := os.ReadFile(*pidFile)
-				if err != nil {
-					return 0, fmt.Errorf("error reading pidfile %q: %s", *pidFile, err)
-				}
-				value, err := strconv.Atoi(strings.TrimSpace(string(content)))
-				if err != nil {
-					return 0, fmt.Errorf("error parsing pidfile %q: %s", *pidFile, err)
-				}
-				return value, nil
-			},
-			Namespace:    namespace,
-			ReportErrors: false,
-		}),
-		NewExporter(*cmd, *timeout),
-	)
+	reg.MustRegister(NewExporter(*cmd, *timeout))
 
 	// Expose /metrics HTTP endpoint using the created custom registry.
 	http.Handle(*metricsPath, promhttp.HandlerFor(reg, promhttp.HandlerOpts{Registry: reg}))
