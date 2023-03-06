@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"flag"
 	"io"
-	"math"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -62,11 +61,6 @@ func TestParsing(t *testing.T) {
 		for _, sg := range info.SuperGroups {
 			if want, got := "/srv/app/demo", sg.Group.Options.AppRoot; want != got {
 				t.Fatalf("%s: incorrect app_root: wanted %s, got %s", name, want, got)
-			}
-
-			queue := parseFloat(sg.RequestQueueSize)
-			if queue == math.NaN() {
-				t.Fatalf("%v: failed to parse request queue size", name)
 			}
 
 			if len(sg.Group.Processes) == 0 {
