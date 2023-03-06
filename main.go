@@ -128,8 +128,8 @@ type Options struct {
 }
 
 const (
-	namespace            = "passenger"
-	nanosecondsPerSecond = 1000000000
+	namespace             = "passenger"
+	microsecondsPerSecond = 1000000
 )
 
 var (
@@ -167,11 +167,11 @@ type Exporter struct {
 // NewExporter returns an initialized exporter.
 func NewExporter(cmd string, timeout float64) *Exporter {
 	cmdComponents := strings.Split(cmd, " ")
-
+	timeoutDuration := time.Duration(timeout * float64(time.Second))
 	return &Exporter{
 		cmd:     cmdComponents[0],
 		args:    cmdComponents[1:],
-		timeout: time.Duration(timeout * nanosecondsPerSecond),
+		timeout: timeoutDuration,
 		up: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "up"),
 			"Current health of passenger.",
@@ -283,7 +283,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 			if bucketID, ok := processIdentifiers[proc.PID]; ok {
 				ch <- prometheus.MustNewConstMetric(e.procMemory, prometheus.GaugeValue, float64(proc.RealMemory), sg.Name, strconv.Itoa(bucketID))
 				ch <- prometheus.MustNewConstMetric(e.requestsProcessed, prometheus.CounterValue, float64(proc.RequestsProcessed), sg.Name, strconv.Itoa(bucketID))
-				ch <- prometheus.MustNewConstMetric(e.procStartTime, prometheus.GaugeValue, float64(proc.SpawnStartTime/nanosecondsPerSecond),
+				ch <- prometheus.MustNewConstMetric(e.procStartTime, prometheus.GaugeValue, float64(proc.SpawnStartTime/microsecondsPerSecond),
 					sg.Name, strconv.Itoa(bucketID),
 				)
 			}
