@@ -26,11 +26,11 @@ import (
 // Info represents the info section of passenger's status.
 type Info struct {
 	PassengerVersion         string       `xml:"passenger_version"`
-	AppGroupCount            string       `xml:"group_count"`
-	CurrentProcessCount      string       `xml:"process_count"`
-	MaxProcessCount          string       `xml:"max"`
-	CapacityUsed             string       `xml:"capacity_used"`
-	TopLevelRequestQueueSize string       `xml:"get_wait_list_size"`
+	AppGroupCount            int64        `xml:"group_count"`
+	CurrentProcessCount      int64        `xml:"process_count"`
+	MaxProcessCount          int64        `xml:"max"`
+	CapacityUsed             int64        `xml:"capacity_used"`
+	TopLevelRequestQueueSize int64        `xml:"get_wait_list_size"`
 	SuperGroups              []SuperGroup `xml:"supergroups>supergroup"`
 }
 
@@ -38,8 +38,8 @@ type Info struct {
 type SuperGroup struct {
 	Name             string `xml:"name"`
 	State            string `xml:"state"`
-	RequestQueueSize string `xml:"get_wait_list_size"`
-	CapacityUsed     string `xml:"capacity_used"`
+	RequestQueueSize int64  `xml:"get_wait_list_size"`
+	CapacityUsed     int64  `xml:"capacity_used"`
 	Group            Group  `xml:"group"`
 }
 
@@ -51,19 +51,19 @@ type Group struct {
 	AppType               string    `xml:"app_type"`
 	Environment           string    `xml:"environment"`
 	UUID                  string    `xml:"uuid"`
-	EnabledProcessCount   string    `xml:"enabled_process_count"`
-	DisablingProcessCount string    `xml:"disabling_process_count"`
-	DisabledProcessCount  string    `xml:"disabled_process_count"`
-	CapacityUsed          string    `xml:"capacity_used"`
-	RequestQueueSize      string    `xml:"get_wait_list_size"`
-	DisableWaitListSize   string    `xml:"disable_wait_list_size"`
-	ProcessesSpawning     string    `xml:"processes_being_spawned"`
+	EnabledProcessCount   int64     `xml:"enabled_process_count"`
+	DisablingProcessCount int64     `xml:"disabling_process_count"`
+	DisabledProcessCount  int64     `xml:"disabled_process_count"`
+	CapacityUsed          int64     `xml:"capacity_used"`
+	RequestQueueSize      int64     `xml:"get_wait_list_size"`
+	DisableWaitListSize   int64     `xml:"disable_wait_list_size"`
+	ProcessesSpawning     int64     `xml:"processes_being_spawned"`
 	LifeStatus            string    `xml:"life_status"`
 	User                  string    `xml:"user"`
-	UID                   string    `xml:"uid"`
+	UID                   int64     `xml:"uid"`
 	Group                 string    `xml:"group"`
-	GID                   string    `xml:"gid"`
-	Default               string    `xml:"default,attr"`
+	GID                   int64     `xml:"gid"`
+	Default               bool      `xml:"default,attr"`
 	Options               Options   `xml:"options"`
 	Processes             []Process `xml:"processes>process"`
 }
@@ -73,26 +73,26 @@ type Process struct {
 	PID                 string `xml:"pid"`
 	StickySessionID     string `xml:"sticky_session_id"`
 	GUPID               string `xml:"gupid"`
-	Concurrency         string `xml:"concurrency"`
-	Sessions            string `xml:"sessions"`
-	Busyness            string `xml:"busyness"`
-	RequestsProcessed   string `xml:"processed"`
-	SpawnerCreationTime string `xml:"spawner_creation_time"`
-	SpawnStartTime      string `xml:"spawn_start_time"`
-	SpawnEndTime        string `xml:"spawn_end_time"`
-	LastUsed            string `xml:"last_used"`
+	Concurrency         int64  `xml:"concurrency"`
+	Sessions            int64  `xml:"sessions"`
+	Busyness            int64  `xml:"busyness"`
+	RequestsProcessed   int64  `xml:"processed"`
+	SpawnerCreationTime int64  `xml:"spawner_creation_time"`
+	SpawnStartTime      int64  `xml:"spawn_start_time"`
+	SpawnEndTime        int64  `xml:"spawn_end_time"`
+	LastUsed            int64  `xml:"last_used"`
 	LastUsedDesc        string `xml:"last_used_desc"`
 	Uptime              string `xml:"uptime"`
 	LifeStatus          string `xml:"life_status"`
 	Enabled             string `xml:"enabled"`
-	HasMetrics          string `xml:"has_metrics"`
-	CPU                 string `xml:"cpu"`
-	RSS                 string `xml:"rss"`
-	PSS                 string `xml:"pss"`
-	PrivateDirty        string `xml:"private_dirty"`
-	Swap                string `xml:"swap"`
-	RealMemory          string `xml:"real_memory"`
-	VMSize              string `xml:"vmsize"`
+	HasMetrics          bool   `xml:"has_metrics"`
+	CPU                 int64  `xml:"cpu"`
+	RSS                 int64  `xml:"rss"`
+	PSS                 int64  `xml:"pss"`
+	PrivateDirty        int64  `xml:"private_dirty"`
+	Swap                int64  `xml:"swap"`
+	RealMemory          int64  `xml:"real_memory"`
+	VMSize              int64  `xml:"vmsize"`
 	ProcessGroupID      string `xml:"process_group_id"`
 	Command             string `xml:"command"`
 }
@@ -105,8 +105,8 @@ type Options struct {
 	StartCommand                  string `xml:"start_command"`
 	StartupFile                   string `xml:"startup_file"`
 	ProcessTitle                  string `xml:"process_title"`
-	LogLevel                      string `xml:"log_level"`
-	StartTimeout                  string `xml:"start_timeout"`
+	LogLevel                      int64  `xml:"log_level"`
+	StartTimeout                  int64  `xml:"start_timeout"`
 	Environment                   string `xml:"environment"`
 	BaseURI                       string `xml:"base_uri"`
 	SpawnMethod                   string `xml:"spawn_method"`
@@ -118,12 +118,12 @@ type Options struct {
 	RubyBinPath                   string `xml:"ruby"`
 	PythonBinPath                 string `xml:"python"`
 	NodeJSBinPath                 string `xml:"nodejs"`
-	Debugger                      string `xml:"debugger"`
+	Debugger                      bool   `xml:"debugger"`
 	APIKey                        string `xml:"api_key"`
-	MinProcesses                  string `xml:"min_processes"`
-	MaxProcesses                  string `xml:"max_processes"`
-	MaxPreloaderIdleTime          string `xml:"max_preloader_idle_time"`
-	MaxOutOfBandWorkInstances     string `xml:"max_out_of_band_work_instances"`
+	MinProcesses                  int64  `xml:"min_processes"`
+	MaxProcesses                  int64  `xml:"max_processes"`
+	MaxPreloaderIdleTime          int64  `xml:"max_preloader_idle_time"`
+	MaxOutOfBandWorkInstances     int64  `xml:"max_out_of_band_work_instances"`
 	StickySessionCookieAttributes string `xml:"sticky_sessions_cookie_attributes"`
 }
 
@@ -268,27 +268,24 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 	ch <- prometheus.MustNewConstMetric(e.up, prometheus.GaugeValue, 1)
 	ch <- prometheus.MustNewConstMetric(e.version, prometheus.GaugeValue, 1, info.PassengerVersion)
 
-	ch <- prometheus.MustNewConstMetric(e.topLevelRequestQueue, prometheus.GaugeValue, parseFloat(info.TopLevelRequestQueueSize))
-	ch <- prometheus.MustNewConstMetric(e.maxProcessCount, prometheus.GaugeValue, parseFloat(info.MaxProcessCount))
-	ch <- prometheus.MustNewConstMetric(e.currentProcessCount, prometheus.GaugeValue, parseFloat(info.CurrentProcessCount))
-	ch <- prometheus.MustNewConstMetric(e.appGroupCount, prometheus.GaugeValue, parseFloat(info.AppGroupCount))
+	ch <- prometheus.MustNewConstMetric(e.topLevelRequestQueue, prometheus.GaugeValue, float64(info.TopLevelRequestQueueSize))
+	ch <- prometheus.MustNewConstMetric(e.maxProcessCount, prometheus.GaugeValue, float64(info.MaxProcessCount))
+	ch <- prometheus.MustNewConstMetric(e.currentProcessCount, prometheus.GaugeValue, float64(info.CurrentProcessCount))
+	ch <- prometheus.MustNewConstMetric(e.appGroupCount, prometheus.GaugeValue, float64(info.AppGroupCount))
 
 	for _, sg := range info.SuperGroups {
-		ch <- prometheus.MustNewConstMetric(e.appRequestQueue, prometheus.GaugeValue, parseFloat(sg.Group.RequestQueueSize), sg.Name)
-		ch <- prometheus.MustNewConstMetric(e.appProcsSpawning, prometheus.GaugeValue, parseFloat(sg.Group.ProcessesSpawning), sg.Name)
+		ch <- prometheus.MustNewConstMetric(e.appRequestQueue, prometheus.GaugeValue, float64(sg.Group.RequestQueueSize), sg.Name)
+		ch <- prometheus.MustNewConstMetric(e.appProcsSpawning, prometheus.GaugeValue, float64(sg.Group.ProcessesSpawning), sg.Name)
 
 		// Update process identifiers map.
-		processIdentifiers = updateProcesses(processIdentifiers, sg.Group.Processes, parseInt(info.MaxProcessCount))
+		processIdentifiers = updateProcesses(processIdentifiers, sg.Group.Processes, int(info.MaxProcessCount))
 		for _, proc := range sg.Group.Processes {
 			if bucketID, ok := processIdentifiers[proc.PID]; ok {
-				ch <- prometheus.MustNewConstMetric(e.procMemory, prometheus.GaugeValue, parseFloat(proc.RealMemory), sg.Name, strconv.Itoa(bucketID))
-				ch <- prometheus.MustNewConstMetric(e.requestsProcessed, prometheus.CounterValue, parseFloat(proc.RequestsProcessed), sg.Name, strconv.Itoa(bucketID))
-
-				if startTime, err := strconv.Atoi(proc.SpawnStartTime); err == nil {
-					ch <- prometheus.MustNewConstMetric(e.procStartTime, prometheus.GaugeValue, float64(startTime/nanosecondsPerSecond),
-						sg.Name, strconv.Itoa(bucketID),
-					)
-				}
+				ch <- prometheus.MustNewConstMetric(e.procMemory, prometheus.GaugeValue, float64(proc.RealMemory), sg.Name, strconv.Itoa(bucketID))
+				ch <- prometheus.MustNewConstMetric(e.requestsProcessed, prometheus.CounterValue, float64(proc.RequestsProcessed), sg.Name, strconv.Itoa(bucketID))
+				ch <- prometheus.MustNewConstMetric(e.procStartTime, prometheus.GaugeValue, float64(proc.SpawnStartTime/nanosecondsPerSecond),
+					sg.Name, strconv.Itoa(bucketID),
+				)
 			}
 		}
 	}
@@ -336,24 +333,6 @@ func parseOutput(r io.Reader) (*Info, error) {
 		return nil, err
 	}
 	return &info, nil
-}
-
-func parseFloat(val string) float64 {
-	v, err := strconv.ParseFloat(val, 64)
-	if err != nil {
-		log.Debugf("failed to parse %s: %v", val, err)
-		v = math.NaN()
-	}
-	return v
-}
-
-func parseInt(val string) int {
-	v, err := strconv.Atoi(val)
-	if err != nil {
-		log.Debugf("failed to parse %s: %v", val, err)
-		v = 0
-	}
-	return v
 }
 
 // updateProcesses updates the global map from process id:exporter id. Process

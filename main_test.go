@@ -54,7 +54,7 @@ func TestParsing(t *testing.T) {
 			t.Fatalf("%v: no supergroups in output", name)
 		}
 
-		topLevelQueue := parseFloat(info.TopLevelRequestQueueSize)
+		topLevelQueue := float64(info.TopLevelRequestQueueSize)
 		if topLevelQueue == 0 {
 			t.Fatalf("%v: no queuing requests parsed from output", name)
 		}
@@ -120,7 +120,7 @@ func TestScrape(t *testing.T) {
 }
 
 func TestStatusTimeout(t *testing.T) {
-	e := NewExporter("sleep 1", time.Millisecond.Seconds())
+	e := NewExporter("sleep 1", float64(time.Millisecond.Seconds()))
 	_, err := e.status()
 	if err == nil {
 		t.Fatalf("failed to timeout")
@@ -327,5 +327,5 @@ func TestProcessSurgeOverMaxProcesses(t *testing.T) {
 }
 
 func newTestExporter() *Exporter {
-	return NewExporter("cat ./test/passenger_xml_output.xml", time.Second.Seconds())
+	return NewExporter("cat ./test/passenger_xml_output.xml", float64(time.Second.Seconds()))
 }
