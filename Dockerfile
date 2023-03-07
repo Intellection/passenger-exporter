@@ -11,14 +11,9 @@ WORKDIR /opt/app
 # Install build tools
 RUN go install github.com/prometheus/promu@v0.14.0
 
-# Copy source files
+# Add source files and build
 ADD . ./
-
-# Install dependencies
-RUN go mod vendor
-
-# # Add source files & build
-RUN promu build
+RUN make
 
 FROM ${RUNNER_IMAGE}
 
@@ -51,9 +46,9 @@ RUN apt-key adv --no-tty --keyserver hkps://keyserver.ubuntu.com --recv-keys 561
     rm -rf /var/lib/apt/lists/*
 
 # Copy files from builder
-COPY --from=builder --chown=${APP_USER}:${APP_USER} ${APP_HOME}/passenger-exporter ./
+COPY --from=builder --chown=${APP_USER}:${APP_USER} ${APP_HOME}/bin/ ./bin/
 
 # Run as user
 USER ${APP_USER}:${APP_USER}
 
-ENTRYPOINT ["./passenger-exporter"]
+ENTRYPOINT ["./bin/passenger-exporter"]

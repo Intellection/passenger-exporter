@@ -1,6 +1,9 @@
 *
 
+!.git
 !.promu.yml
 !go.mod
 !go.sum
 !main.go
+!Makefile
+!VERSION
