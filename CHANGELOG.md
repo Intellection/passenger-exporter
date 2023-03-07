@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.8.0
+## 1.0.0
 
 ### Breaking Changes
 * Rename `app_count` metric to `app_group_count`.
