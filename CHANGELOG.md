@@ -1,5 +1,33 @@
 # Changelog
 
+## 1.0.0
+
+### Breaking Changes
+* Rename `app_count` metric to `app_group_count`.
+* Update `proc_start_time_seconds` metric to correctly be in unix seconds.
+* Update default value for `-passenger.command.timeout-seconds` flag to `5s`.
+* Remove process metrics collector.
+* Remomve `/` endpoint showing link to metrics path.
+
+### Bug Fixes
+* Prevent index out of range panics when the number of passenger processes surges past the max pool size temporarily when replacing an existing process.
+
+### Improvements
+* Upgrade to Go `v1.20.1`.
+* Switch Go modules.
+* Upgrade Go dependencies.
+* Upgrade bundled Passenger to `v6.0.17`.
+* Switch container image from Alpine Linux to Debian Bullseye.
+* Use builder pattern to build binary and copy it into runner image.
+* Run container as `exporter` user instead of `nobody`.
+* Add new fields parsed from passenger status command.
+* Use expected types in structs instead of parsing afterwards.
+* Configure `promu` to use `netgo` instead of `installsuffix`.
+* Switch to `sirupsen/logrus` logger as `prometheus/common` no longer includes it.
+* Add launch configuration for debugging in Visual Studio Code.
+* Add GitHub Actions workflow for testing and linting.
+* Simplify Makefile for single command builds.
+
 ## 0.7.1
 
 ### Bug Fixes

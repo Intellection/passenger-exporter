@@ -1,25 +1,24 @@
-VERSION   := $(shell cat VERSION)
-BIN       := passenger-exporter
-CONTAINER := passenger-exporter
-GOOS      ?= linux
-GOARCH    ?= amd64
+BIN_DIR := ./bin
 
-GOFLAGS   := -ldflags "-X main.Version=$(VERSION)" -a -installsuffix cgo
-TAR       := $(BIN)-$(VERSION)-$(GOOS)-$(GOARCH).tar.gz
-DST       ?= http://ent.int.s-cloud.net/iss/$(BIN)
+.PHONY: all
+all: dependencies build
 
-PREFIX    ?= $(shell pwd)
+.PHONY: build
+build:
+	promu build --prefix=$(BIN_DIR)
 
-default: $(BIN)
+.PHONY: test
+test:
+	go test -v ./...
 
-$(BIN):
-	CGO_ENABLED=0 GOOS=$(GOOS) GOARCH=$(GOARCH) promu build --prefix $(PREFIX)
+.PHONY: lint
+lint:
+	golangci-lint run
 
-release: $(TAR)
-	curl -XPOST --data-binary @$< $(DST)/$<
+.PHONY: dependencies
+dependencies:
+	go mod vendor
 
-build-docker: $(BIN)
-	docker build -t $(CONTAINER) .
-
-$(TAR): $(BIN)
-	tar czf $@ $<
+.PHONY: clean
+clean:
+	rm -rf ${BIN_DIR}

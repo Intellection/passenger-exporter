@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug exporter",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "main.go",
+      "env": { "PASSENGER_INSTANCE_REGISTRY_DIR": "/tmp/passenger"}
+    }
+  ]
+}

@@ -1,8 +1,9 @@
 *
 
+!.git
 !.promu.yml
-!passenger_exporter.go
-!passenger_exporter_test.go
+!go.mod
+!go.sum
+!main.go
 !Makefile
-!vendor/
 !VERSION
