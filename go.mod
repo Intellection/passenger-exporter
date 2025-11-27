@@ -1,12 +1,12 @@
 module github.com/Intellection/passenger-exporter
 
-go 1.20
+go 1.23.0
 
 require (
 	github.com/prometheus/client_golang v1.14.0
 	github.com/prometheus/common v0.41.0
 	github.com/sirupsen/logrus v1.9.0
-	golang.org/x/net v0.23.0
+	golang.org/x/net v0.38.0
 )
 
 require (
@@ -17,7 +17,7 @@ require (
 	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/procfs v0.9.0 // indirect
 	github.com/stretchr/testify v1.8.2 // indirect
-	golang.org/x/sys v0.18.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/sys v0.31.0 // indirect
+	golang.org/x/text v0.23.0 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
 )
