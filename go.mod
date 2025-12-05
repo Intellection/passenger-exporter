@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/prometheus/client_golang v1.14.0
 	github.com/prometheus/common v0.41.0
-	github.com/sirupsen/logrus v1.9.0
+	github.com/sirupsen/logrus v1.9.1
 	golang.org/x/net v0.23.0
 )
 
